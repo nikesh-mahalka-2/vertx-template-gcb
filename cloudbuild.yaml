@@ -1,26 +1,26 @@
 # sourceclear and docker store secrets
 secrets:
-- kmsKeyName: projects/spinnaker-poc-200412/locations/global/keyRings/source-clear-encryption/cryptoKeys/source-clear-encryption
+- kmsKeyName: projects/<project-id>/locations/global/keyRings/<secret_keyring>/cryptoKeys/<secret_key>
   secretEnv:
-    SRCCLR_API_TOKEN: CiQAxgges9eJ3Ae+K0ncF0O/Mb5dtAu/2ZBxHBHuBxwBQ0bjI14SyQMAnnQB+oQeOtj+xlIMzYOy7gYjHz+NNEvXbCkD4rru22WxriP5uD2By/GAyfh7zayMmQrPGfMpEiIv3D4RvEETYvvctUctG7p52axoSBmndCbe8FYyAgOZL7xcTf4XuHijtvYWLDKoKM7CggANss0hKRmvKnSCfYRRffE18bzIcYygCnx0QdlfF6WXJZZxIxP4CuklJkaU0CiQzYUKrY5OsNxnue/YiWkaexaPkZhnwpC/xGMzOfUNSMFhe70Zqas7ZGR8pzEPaRy1C//qoVsOkqKyxBCqW+LfFLPVic/UlmnKo0lWySDGhvY1XzNQeU8u2hE05zggg0xjCi7q5mw5XcuutcktGx2AMtT7gZplwHBz6sOIn/4gP+7SzuQtmjRHxBwAgMXcqKhYSPy2COC6Vq1ODb0otpdLc09Tqd+1FAOKOLRQ6rPKDKPqviUEgemaaTQWMrcdBNP2YbqgK8U2RXL2uc2/49bU3TpjFbAonzMD9gaCvMw/d3CK3yDDu44NTZEiuldO3R01CwbbkAz5gp7MYUtMBHAeATKvhPFW1dSv9EJML0+j7ldROVYuXbOx6UO3xy87dyDg7e50C3i8UQkpsZ8PgTuX
-    DOCKER_LOGIN: CiQAxgges7DOxqkgtgOuOMALZgIaa9f1JiSno67g6Lol98O5nocSNACedAH6lqExDVBta0bn8WLD+XqAwhLapJxt4mMxzm6waV8t3js8eSV2PswjVb8DDNWWGxE=
+    SRCCLR_API_TOKEN: <paste here>
+    DOCKER_LOGIN: <paste here>
 
 # Build Steps:
 # 1. Copying the ojdbc7.jar from google cloud storage bucket to workspace
 # 2. Using GCB docker-compose container with "gcr.io/cloud-builders/mvn" as base image
-# 2.1 Running a bash script "docker-compose-testing.sh" inside above GCB docker-compose container
+# 2.1 Running a bash script "docker-compose.sh" inside above GCB docker-compose container
 # 3. Building GCR image with application
 # Note: Edited sample.properties and enabled ojdbc7 dependency in pom.xml
-# Note: docker-compose.yml is used by docker-compose in script "docker-compose-testing.sh"
-# Note: Bash script "check_oracle_table.sh" is used in "docker-compose-testing.sh"
+# Note: docker-compose.yml is used by docker-compose in script "docker-compose.sh"
+# Note: Bash script "check_oracle_table.sh" is used in "docker-compose.sh"
 # Note: Dockerfile is used in step 3
 
 steps:
 - name: gcr.io/cloud-builders/gsutil
-  args: ['cp', 'gs://delete-oracle-jdbc-jar/ojdbc7.jar', 'ojdbc7.jar']
-- name: 'gcr.io/spinnaker-poc-200412/github-nikesh-mahalka-2-container-builder-docker-compose:latest'
+  args: ['cp', 'gs://<jdbc-bucket>/ojdbc7.jar', 'ojdbc7.jar']
+- name: 'gcr.io/<project-id>/docker-compose:latest'
   entrypoint: 'bash'
-  args: ['-c', 'chmod 755 ./docker-compose-testing.sh; ./docker-compose-testing.sh']
+  args: ['-c', 'chmod 755 ./docker-compose.sh; ./docker-compose.sh']
   secretEnv: ['SRCCLR_API_TOKEN', 'DOCKER_LOGIN']
 - name: 'gcr.io/cloud-builders/docker'
   args: ["build", "-t", "gcr.io/$PROJECT_ID/vertx-template-gcb:latest", "."]
