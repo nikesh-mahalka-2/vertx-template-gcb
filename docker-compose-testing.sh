@@ -5,6 +5,8 @@ chmod +x /workspace/check_oracle_table.sh
 echo "docker login"
 docker login -u nike1niec -p $DOCKER_LOGIN
 
+# docker-compose.yml is used by docker-compose
+
 # Oracle database service
 echo "docker-compose up -d dbserver" 
 docker-compose up -d dbserver
