@@ -9,6 +9,7 @@ secrets:
 # 1. Copying the ojdbc7.jar from google cloud storage bucket to workspace
 # 2. Using GCB docker-compose container with "gcr.io/cloud-builders/mvn" as base image
 # 2.1 Running a bash script "docker-compose-testing.sh" inside above GCB docker-compose container
+# Note: Edited sample.properties and enabled ojdbc7 dependency in pom.xml
 steps:
 - name: gcr.io/cloud-builders/gsutil
   args: ['cp', 'gs://delete-oracle-jdbc-jar/ojdbc7.jar', 'ojdbc7.jar']
