@@ -3,7 +3,7 @@ chmod +x /workspace/check_oracle_table.sh
 
 # To get access to docker store
 echo "docker login"
-docker login -u nike1niec -p $DOCKER_LOGIN
+docker login -u <username> -p $DOCKER_LOGIN
 
 # docker-compose.yml is used by docker-compose
 
