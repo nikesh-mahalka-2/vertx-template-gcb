@@ -45,7 +45,7 @@ services:
     volumes:
       - /workspace:/workspace
     entrypoint: |
-      bash -c "cd /workspace; mvn -DskipTests -Ppostgres clean package; curl -sSL https://download.sourceclear.com/ci.sh | sh; nohup java -jar ./target/vertx-*-SNAPSHOT.jar create-database run 2>&1 & sleep 1"
+      bash -c "apt-get update; apt-get install curl -y; cd /workspace; mvn -DskipTests -Ppostgres clean package; curl -sSL https://download.sourceclear.com/ci.sh | sh; nohup java -jar ./target/vertx-*-SNAPSHOT.jar create-database run 2>&1 & sleep 1"
     depends_on:
       - dbserver
 
