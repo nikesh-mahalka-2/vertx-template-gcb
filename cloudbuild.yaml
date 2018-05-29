@@ -6,7 +6,7 @@ secrets:
     DOCKER_LOGIN: CiQAxgges7DOxqkgtgOuOMALZgIaa9f1JiSno67g6Lol98O5nocSNACedAH6lqExDVBta0bn8WLD+XqAwhLapJxt4mMxzm6waV8t3js8eSV2PswjVb8DDNWWGxE=
 
 # Build Steps:
-# 1. Copying the ojdbc7.jar from google cloud storage bucket to workspace
+# 1. Copying the ojdbc7.jar from google cloud storage bucket to workspace in case of Oracle DB
 # 2. Using GCB docker-compose container with "gcr.io/cloud-builders/mvn" as base image
 # 2.1 Running a bash script "docker-compose.sh" inside above GCB docker-compose container
 # 3. Building GCR image with application
@@ -16,8 +16,8 @@ secrets:
 # Note: Dockerfile is used in step 3
 
 steps:
-- name: gcr.io/cloud-builders/gsutil
-  args: ['cp', 'gs://delete-oracle-jdbc-jar/ojdbc7.jar', 'ojdbc7.jar']
+#- name: gcr.io/cloud-builders/gsutil
+#  args: ['cp', 'gs://delete-oracle-jdbc-jar/ojdbc7.jar', 'ojdbc7.jar']
 - name: 'gcr.io/spinnaker-poc-200412/github-nikesh-mahalka-2-container-builder-docker-compose:latest'
   entrypoint: 'bash'
   args: ['-c', 'chmod 755 ./docker-compose.sh; ./docker-compose.sh']
