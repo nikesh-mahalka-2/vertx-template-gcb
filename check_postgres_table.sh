@@ -8,3 +8,4 @@ do
   sleep 10
 done
 echo "app_message table is created"
+
