@@ -1,4 +1,4 @@
-# sourceclear and docker store secrets 
+# sourceclear and docker store secrets      
 secrets:
 - kmsKeyName: projects/spinnaker-poc-200412/locations/global/keyRings/source-clear-encryption/cryptoKeys/source-clear-encryption
   secretEnv:
