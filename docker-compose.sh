@@ -2,7 +2,7 @@
 
 # Oracle image pull need authentication to Docker Store
 echo "Login to Docker Store : docker login"
-docker login -u nike1niec -p $DOCKER_LOGIN
+docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
 
 # docker-compose.yml is used by docker-compose
 # Start Oracle database service
