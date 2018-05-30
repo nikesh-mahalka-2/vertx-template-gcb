@@ -1,4 +1,4 @@
-# cloudbuild.yaml for building vertx-template with Oracle DB in GCB
+# cloudbuild.yaml for building vertx-template with Oracle DB in GCB 
 
 
 # Credentials of SourceClear and Docker Store are encrypted using Google Cloud KMS
