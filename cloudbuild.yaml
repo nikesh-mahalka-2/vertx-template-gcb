@@ -1,4 +1,4 @@
-# cloudbuild.yaml for building vertx-template with Postgres DB in GCB
+# cloudbuild.yaml for building vertx-template with Postgres DB in GCB 
 
 
 # Credential of SourceClear is encrypted using Google Cloud KMS
