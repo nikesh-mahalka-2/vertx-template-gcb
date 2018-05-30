@@ -27,7 +27,10 @@ steps:
 - name: 'gcr.io/spinnaker-poc-200412/github-nikesh-mahalka-2-container-builder-docker-compose:latest'
   entrypoint: 'bash'
   args: ['-c', 'chmod 755 ./docker-compose.sh; ./docker-compose.sh']
-  secretEnv: ['SRCCLR_API_TOKEN', 'DOCKER_LOGIN']
+  # For Postgres DB
+  secretEnv: ['SRCCLR_API_TOKEN']
+  # For Oracle DB
+  # secretEnv: ['SRCCLR_API_TOKEN', 'DOCKER_LOGIN']
 - name: 'gcr.io/cloud-builders/docker'
   args: ["build", "-t", "gcr.io/$PROJECT_ID/vertx-template-gcb:latest", "."]
 
