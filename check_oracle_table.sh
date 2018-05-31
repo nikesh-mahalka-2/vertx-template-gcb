@@ -7,7 +7,7 @@ num_retry=1
 
 echo "Checking existence of table app_server in Oracle DB created by the application"
 
-until [[ "$num_retry" -gt "$DB_TBL_CHK_MAX_RETRY" ]]
+until [[ $num_retry -gt $DB_TBL_CHK_MAX_RETRY ]]
 do
   RES=`$SQLPATH -S $LOGON << EOF
 describe app_message
