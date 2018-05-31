@@ -62,7 +62,7 @@ docker-compose up appserver
 # Checking existence of table app_server in Oracle DB created by the application
 STATUS=`docker exec dbserver /workspace/check_oracle_table.sh`
 
-if [[ $STATUS -eq 1 ]]
+if [[ $STATUS -eq 1 ]]; then
   exit 1
 fi
 # Cleaning the docker-compose resources
