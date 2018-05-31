@@ -64,6 +64,6 @@ STATUS=`docker exec dbserver /workspace/check_oracle_table.sh`
 
 if [[ $STATUS -eq 1 ]]
   exit 1
-
+fi
 # Cleaning the docker-compose resources
 docker-compose down
