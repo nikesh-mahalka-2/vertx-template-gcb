@@ -12,12 +12,26 @@ docker-compose up -d dbserver
 echo "Checking Oracle database health ... "
 
 DB_HEALTH=""
-while [ "${DB_HEALTH}" != "\"healthy\"" ]
+num_retry=1
+until [ $num_retry -gt $DB_HLTH_CHK_MAX_RETRY ]
 do
- DB_HEALTH="$(docker inspect --format='{{json .State.Health.Status}}' dbserver)"
- sleep 20
- echo $DB_HEALTH
+   DB_HEALTH="$(docker inspect --format='{{json .State.Health.Status}}' dbserver)"
+   if [[ "${DB_HEALTH}" == "\"healthy\"" ]]; then
+     break
+   else
+     echo "Oracle DB is $DB_HEALTH"
+     echo "retry-$num_retry to check Oracle DB HEALTH"
+     num_retry=$[$num_retry+1]
+   fi
+   sleep $SLEEP
 done
+
+if [[ "${DB_HEALTH}" == "\"healthy\"" ]]; then
+  echo "Oracle DB is $DB_HEALTH"
+else
+  echo "Oracle DB is $DB_HEALTH"
+  exit 1
+fi
 
 # Start application build service:
 # ojdbc7.jar dependency will be installed in local maven repo.

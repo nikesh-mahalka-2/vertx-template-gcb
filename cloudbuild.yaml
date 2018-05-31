@@ -32,6 +32,7 @@ steps:
   entrypoint: 'bash'
   args: ['-c', './docker-compose.sh']
   secretEnv: ['SRCCLR_API_TOKEN','DOCKER_USERNAME','DOCKER_PASSWORD']
+  env: ['DB_HLTH_CHK_MAX_RETRY'=10,'DB_TBL_CHK_TMOT'=1,'SLEEP'=20]
 - name: 'gcr.io/cloud-builders/docker'
   args: ["build", "-t", "gcr.io/$PROJECT_ID/vertx-template-oracle:latest", "."]
 
