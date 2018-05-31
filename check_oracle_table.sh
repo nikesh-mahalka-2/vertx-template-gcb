@@ -12,7 +12,7 @@ do
   RES=`$SQLPATH -S $LOGON << EOF
 describe app_message
 EOF`
-  if [[ $RES =~ "ERROR: ORA-" ]]; then
+  if [[ $RES =~ "ERROR:" ]]; then
     echo "app_message table creation status is: $RES"
     echo "retry-$num_retry to check app_message table creation status"
     num_retry=$[$num_retry+1]
@@ -23,7 +23,7 @@ EOF`
 done
 
 echo "app_message table creation status is: $RES"
-if [[ $RES =~ "ERROR: ORA-" ]]; then
+if [[ $RES =~ "ERROR:" ]]; then
   exit 1
 fi
 
