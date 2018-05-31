@@ -11,7 +11,7 @@ EOF`
     echo "app_message table creation status is: $STATUS"
     echo "retry-$num_retry to check app_message table creation status"
     num_retry=$[$num_retry+1]
-    sleep $SLEEP
+    sleep $DB_TBL_CHK_SLEEP
   else
     break
 done

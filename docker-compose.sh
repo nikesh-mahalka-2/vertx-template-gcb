@@ -23,7 +23,7 @@ do
      echo "retry-$num_retry to check Oracle DB HEALTH"
      num_retry=$[$num_retry+1]
    fi
-   sleep $SLEEP
+   sleep $DB_HLTH_CHK_SLEEP
 done
 
 if [[ "${DB_HEALTH}" == "\"healthy\"" ]]; then
