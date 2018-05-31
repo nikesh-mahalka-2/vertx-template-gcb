@@ -1,15 +1,17 @@
-# cloudbuild.yaml for building vertx-template with Oracle DB in GCB 
+# cloudbuild.yaml for building vertx-template with Oracle DB in GCB
 
 
 # Credentials of SourceClear and Docker Store are encrypted using Google Cloud KMS
 # Docker Store secret is used for Oracle DB
+# See below link for more information on using Google Cloud KMS:
+# https://cloud.google.com/container-builder/docs/securing-builds/use-encrypted-secrets-credentials#encrypting_an_environment_variable_using_the_cryptokey
 
 secrets:
-- kmsKeyName: projects/spinnaker-poc-200412/locations/global/keyRings/source-clear-encryption/cryptoKeys/source-clear-encryption
+- kmsKeyName: projects/<GCP-PROJECT-ID>/locations/global/keyRings/<GCP-KMS-KEYRING-NAME>/cryptoKeys/<GCP-KMS-KEY-NAME>
   secretEnv:
-    SRCCLR_API_TOKEN: CiQAxgges9eJ3Ae+K0ncF0O/Mb5dtAu/2ZBxHBHuBxwBQ0bjI14SyQMAnnQB+oQeOtj+xlIMzYOy7gYjHz+NNEvXbCkD4rru22WxriP5uD2By/GAyfh7zayMmQrPGfMpEiIv3D4RvEETYvvctUctG7p52axoSBmndCbe8FYyAgOZL7xcTf4XuHijtvYWLDKoKM7CggANss0hKRmvKnSCfYRRffE18bzIcYygCnx0QdlfF6WXJZZxIxP4CuklJkaU0CiQzYUKrY5OsNxnue/YiWkaexaPkZhnwpC/xGMzOfUNSMFhe70Zqas7ZGR8pzEPaRy1C//qoVsOkqKyxBCqW+LfFLPVic/UlmnKo0lWySDGhvY1XzNQeU8u2hE05zggg0xjCi7q5mw5XcuutcktGx2AMtT7gZplwHBz6sOIn/4gP+7SzuQtmjRHxBwAgMXcqKhYSPy2COC6Vq1ODb0otpdLc09Tqd+1FAOKOLRQ6rPKDKPqviUEgemaaTQWMrcdBNP2YbqgK8U2RXL2uc2/49bU3TpjFbAonzMD9gaCvMw/d3CK3yDDu44NTZEiuldO3R01CwbbkAz5gp7MYUtMBHAeATKvhPFW1dSv9EJML0+j7ldROVYuXbOx6UO3xy87dyDg7e50C3i8UQkpsZ8PgTuX
-    DOCKER_USERNAME: CiQAxgges/+3suiMjp5sutEQ+IwPYWzdSO7U0r1lMj64oyQAzMASMgCedAH6qAy7p6/EHl7MhcYFJDEB5Ve+uJUpvIBU+VB0prvuiy70/l2xLZi8igs4JW+y
-    DOCKER_PASSWORD: CiQAxgges7DOxqkgtgOuOMALZgIaa9f1JiSno67g6Lol98O5nocSNACedAH6lqExDVBta0bn8WLD+XqAwhLapJxt4mMxzm6waV8t3js8eSV2PswjVb8DDNWWGxE=
+    SRCCLR_API_TOKEN: <ENCRYPTED-SOURCECLEAR-AGENT-API-TOKEN>
+    DOCKER_USERNAME: <ENCRYPTED-DOCKER-USERNAME>
+    DOCKER_PASSWORD: <ENCRYPTED-DOCKER-PASSWORD>
 
 # Build Steps:
 # 1. ojdbc7.jar is copied from Google Cloud Storage bucket to GCB workspace for
@@ -25,13 +27,13 @@ secrets:
 
 steps:
 - name: gcr.io/cloud-builders/gsutil
-  args: ['cp', 'gs://delete-oracle-jdbc-jar/ojdbc7.jar', 'ojdbc7.jar']
-- name: 'gcr.io/spinnaker-poc-200412/github-nikesh-mahalka-2-container-builder-docker-compose:latest'
+  args: ['cp', 'gs://<GCS-BUCKET-HOSTING-OJDBC7.JAR>/ojdbc7.jar', 'ojdbc7.jar']
+- name: 'gcr.io/$PROJECT_ID/docker-compose:latest'
   entrypoint: 'bash'
   args: ['-c', './docker-compose.sh']
   secretEnv: ['SRCCLR_API_TOKEN','DOCKER_USERNAME','DOCKER_PASSWORD']
 - name: 'gcr.io/cloud-builders/docker'
-  args: ["build", "-t", "gcr.io/$PROJECT_ID/vertx-template-gcb:latest", "."]
+  args: ["build", "-t", "gcr.io/$PROJECT_ID/vertx-template-oracle:latest", "."]
 
 images:
-  - 'gcr.io/$PROJECT_ID/vertx-template-gcb:latest'
+  - 'gcr.io/$PROJECT_ID/vertx-template-oracle:latest'
