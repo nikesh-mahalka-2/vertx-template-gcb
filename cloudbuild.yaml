@@ -24,8 +24,8 @@ steps:
 - name: 'gcr.io/cloud-builders/docker'
   entrypoint: 'bash'
   args: ['-c', 'chmod 755 /workspace/check_oracledb_health.sh; ./check_oracledb_health.sh']
-  env: ['DB_HLTH_CHK_MAX_RETRY=7','DB_HLTH_CHK_SLEEP=20']
+  env: ['DB_HLTH_CHK_MAX_RETRY=3','DB_HLTH_CHK_SLEEP=20']
 
 
-images:
-  - 'gcr.io/$PROJECT_ID/vertx-template-gcb:latest'
+#images:
+#  - 'gcr.io/$PROJECT_ID/vertx-template-gcb:latest'
