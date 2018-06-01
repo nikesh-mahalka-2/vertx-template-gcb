@@ -16,6 +16,6 @@ do
   sleep $DB_HLTH_CHK_SLEEP
 done
 
-if [[ $num_retry -gt $DB_HLTH_CHK_MAX_RETRY ]]
+if [[ $num_retry -gt $DB_HLTH_CHK_MAX_RETRY ]]; then
   exit 1
 fi
