@@ -1,0 +1,31 @@
+secrets:
+- kmsKeyName: 'projects/spinnaker-poc-200412/locations/global/keyRings/source-clear-encryption/cryptoKeys/source-clear-encryption'
+  secretEnv:
+    SRCCLR_API_TOKEN: CiQAxgges9eJ3Ae+K0ncF0O/Mb5dtAu/2ZBxHBHuBxwBQ0bjI14SyQMAnnQB+oQeOtj+xlIMzYOy7gYjHz+NNEvXbCkD4rru22WxriP5uD2By/GAyfh7zayMmQrPGfMpEiIv3D4RvEETYvvctUctG7p52axoSBmndCbe8FYyAgOZL7xcTf4XuHijtvYWLDKoKM7CggANss0hKRmvKnSCfYRRffE18bzIcYygCnx0QdlfF6WXJZZxIxP4CuklJkaU0CiQzYUKrY5OsNxnue/YiWkaexaPkZhnwpC/xGMzOfUNSMFhe70Zqas7ZGR8pzEPaRy1C//qoVsOkqKyxBCqW+LfFLPVic/UlmnKo0lWySDGhvY1XzNQeU8u2hE05zggg0xjCi7q5mw5XcuutcktGx2AMtT7gZplwHBz6sOIn/4gP+7SzuQtmjRHxBwAgMXcqKhYSPy2COC6Vq1ODb0otpdLc09Tqd+1FAOKOLRQ6rPKDKPqviUEgemaaTQWMrcdBNP2YbqgK8U2RXL2uc2/49bU3TpjFbAonzMD9gaCvMw/d3CK3yDDu44NTZEiuldO3R01CwbbkAz5gp7MYUtMBHAeATKvhPFW1dSv9EJML0+j7ldROVYuXbOx6UO3xy87dyDg7e50C3i8UQkpsZ8PgTuX
+    DOCKER_USERNAME: CiQAxgges/+3suiMjp5sutEQ+IwPYWzdSO7U0r1lMj64oyQAzMASMgCedAH6qAy7p6/EHl7MhcYFJDEB5Ve+uJUpvIBU+VB0prvuiy70/l2xLZi8igs4JW+y
+    DOCKER_PASSWORD: CiQAxgges7DOxqkgtgOuOMALZgIaa9f1JiSno67g6Lol98O5nocSNACedAH6lqExDVBta0bn8WLD+XqAwhLapJxt4mMxzm6waV8t3js8eSV2PswjVb8DDNWWGxE=
+
+# Build Steps:
+steps:
+- name: 'gcr.io/cloud-builders/gsutil'
+  args: ['cp', 'gs://delete-oracle-jdbc-jar/ojdbc7.jar', 'ojdbc7.jar']
+
+- name: 'gcr.io/cloud-builders/docker'
+  entrypoint: 'bash'
+  args: ['-c', 'docker login --username=$$DOCKER_USERNAME --password=$$DOCKER_PASSWORD']
+  secretEnv: ['DOCKER_PASSWORD']
+
+- name: 'gcr.io/cloud-builders/docker'
+  args: ['network', 'create', 'standford']
+
+- name: 'gcr.io/cloud-builders/docker'
+  args: ['run', '-d', '--name', 'dbserver', '--net', 'standford', 'store/oracle/database-enterprise:12.2.0.1-slim']
+
+- name: 'gcr.io/cloud-builders/docker'
+  entrypoint: 'bash'
+  args: ['-c', 'chmod 755 /workspace/check_oracledb_health.sh; ./check_oracledb_health.sh']
+  env: ['DB_HLTH_CHK_MAX_RETRY=7','DB_HLTH_CHK_SLEEP=20']
+
+
+images:
+  - 'gcr.io/$PROJECT_ID/vertx-template-gcb:latest'
