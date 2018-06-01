@@ -15,11 +15,12 @@ steps:
   args: ['-c', 'docker login --username=$$DOCKER_USERNAME --password=$$DOCKER_PASSWORD']
   secretEnv: ['DOCKER_USERNAME', 'DOCKER_PASSWORD']
 
-- name: 'gcr.io/cloud-builders/docker'
-  args: ['network', 'create', 'standford']
+#- name: 'gcr.io/cloud-builders/docker'
+#  args: ['network', 'create', 'standford']
 
 - name: 'gcr.io/cloud-builders/docker'
-  args: ['run', '-d', '--name', 'dbserver', '--net', 'standford', 'store/oracle/database-enterprise:12.2.0.1-slim']
+  #args: ['run', '-d', '--name', 'dbserver', '--net', 'standford', 'store/oracle/database-enterprise:12.2.0.1-slim']
+  args: ['run', '-d', '--name', 'dbserver', 'store/oracle/database-enterprise:12.2.0.1-slim']
 
 - name: 'gcr.io/cloud-builders/docker'
   entrypoint: 'bash'
