@@ -21,8 +21,13 @@ steps:
 - name: 'gcr.io/cloud-builders/docker'
   args: ['run', '-d', '--name', 'dbserver', '--net', 'standford', 'store/oracle/database-enterprise:12.2.0.1-slim']
 
-- name: 'alpine'
-  args: ['ping', 'dbserver']
+#- name: 'alpine'
+#  args: ['ping', 'dbserver']
+  
+- name: 'gcr.io/cloud-builders/docker'
+  args: ['run', '--name', 'test-ping', '--net', 'standford', 'alpine', 'sh', '-c', 'ping', 'dbserver']
+  
+  
 #- name: 'gcr.io/cloud-builders/docker'
 #  entrypoint: 'bash'
 #  args: ['-c', 'chmod 755 /workspace/check_oracledb_health.sh; ./check_oracledb_health.sh']
