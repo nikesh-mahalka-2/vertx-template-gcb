@@ -25,7 +25,8 @@ steps:
 #  args: ['ping', 'dbserver']
   
 - name: 'gcr.io/cloud-builders/docker'
-  args: ['run', '--name', 'test-ping', '--net', 'standford', 'alpine', 'sh', '-c', 'ping', 'dbserver']
+  args: ['run', '--name', 'test-ping', 'alpine', 'ping', '-w', '10', 'google.com']
+  args: ['run', '--name', 'test-ping', '--net', 'standford', 'alpine', 'ping', '-w', '10', 'dbserver']
   
   
 #- name: 'gcr.io/cloud-builders/docker'
