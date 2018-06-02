@@ -19,6 +19,13 @@ secrets:
 
 # Note: Edited sample.properties for Oracle/Postgres and enabled/disabled ojdbc7 dependency in pom.xml
 steps:
+- name: 'gcr.io/cloud-builders/docker'
+  args: ['network', 'create', 'stanford']
+
+- name: 'gcr.io/cloud-builders/docker'
+  args: ['run', '-d', '--name', 'postgres-dbserver', '--net', 'stanford', '-v',
+         '/workspace:/workspace', 'store/oracle/database-enterprise:12.2.0.1-slim']
+  
 - name: 'gcr.io/spinnaker-poc-200412/github-nikesh-mahalka-2-container-builder-docker-compose:latest'
   entrypoint: 'bash'
   args: ['-c', './docker-compose.sh']
