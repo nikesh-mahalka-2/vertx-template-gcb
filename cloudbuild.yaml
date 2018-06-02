@@ -35,10 +35,9 @@ steps:
   entrypoint: 'bash'
   args: ['-c', "docker run -d --name apptestserver --net standford  -v /workspace:/workspace --entrypoint 'bash' 'gcr.io/cloud-builders/mvn'  -c 'cd /workspace; java -Ddatabase.url=jdbc:oracle:thin:@dbserver:1521/ORCLCDB.localdomain -Djava.security.egd=file:/dev/./urandom -jar /workspace/target/vertx-*-SNAPSHOT.jar create-database run'"]
 
-
 - name: 'gcr.io/cloud-builders/docker'
   args: ['exec', '-e', 'DB_TBL_CHK_MAX_RETRY', '-e', 'DB_TBL_CHK_SLEEP', 'dbserver', 'bash', '-c', '/workspace/check_oracle_table.sh']
-  env: ['DB_TBL_CHK_MAX_RETRY=10','DB_TBL_CHK_SLEEP=10']]
+  env: ['DB_TBL_CHK_MAX_RETRY=10','DB_TBL_CHK_SLEEP=10']
 
 
 
