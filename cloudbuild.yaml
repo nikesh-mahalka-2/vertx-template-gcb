@@ -23,8 +23,22 @@ steps:
   
 - name: 'gcr.io/cloud-builders/docker'
   entrypoint: 'bash'
-  args: ['-c', 'chmod 755 /workspace/check_oracledb_health.sh; ./check_oracledb_health.sh']
+  args: ['-c', 'chmod 755 ./check_oracledb_health.sh; ./check_oracledb_health.sh']
   env: ['DB_HLTH_CHK_MAX_RETRY=3','DB_HLTH_CHK_SLEEP=20']
+  
+- name: 'gcr.io/cloud-builders/mvn'
+  entrypoint: 'bash'
+  args: ['-c', 'apt-get update; apt-get install curl -y; \
+         mvn install:install-file -Dfile=./ojdbc7.jar -DgroupId=com.oracle.jdbc -DartifactId=ojdbc7 -Dversion=12.1.0.2 -Dpackaging=jar; \
+         mvn -DskipTests clean package; \
+         curl -sSL https://download.sourceclear.com/ci.sh | sh; \
+         nohup java -Ddatabase.url=jdbc:oracle:thin:@dbserver.workspace_default:1521/ORCLCDB.localdomain \
+         -Djava.security.egd=file:/dev/./urandom -jar ./target/vertx-*-SNAPSHOT.jar create-database run 2>&1 &']
+  secretEnv: ['SRCCLR_API_TOKEN']
+
+ - name: 'gcr.io/cloud-builders/docker'
+   entrypoint: 'bash'
+   args: ['-c', './check_oracle_table.sh']
 
 
 #images:
