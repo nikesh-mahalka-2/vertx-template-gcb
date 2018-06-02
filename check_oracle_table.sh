@@ -9,8 +9,8 @@ do
   echo "retry-$num_retry to check existence of table app_server in Oracle DB"
   num_retry=$[$num_retry+1]
   RESP=`$SQLPATH -S $LOGON << EOF
-  describe app_message
-  EOF`
+describe app_message
+EOF`
   echo "app_message table creation status is: $RESP"
   if [[ $RESP != *"ERROR:"* ]]; then
     exit 0
