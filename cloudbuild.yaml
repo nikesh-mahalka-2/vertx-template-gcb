@@ -16,10 +16,10 @@ steps:
   secretEnv: ['DOCKER_USERNAME', 'DOCKER_PASSWORD']
 
 - name: 'gcr.io/cloud-builders/docker'
-  args: ['network', 'create', 'standford']
+  args: ['network', 'create', 'stanford']
 
 - name: 'gcr.io/cloud-builders/docker'
-  args: ['run', '-d', '--name', 'dbserver', '--net', 'standford', '-v', '/workspace:/workspace', 'store/oracle/database-enterprise:12.2.0.1-slim']
+  args: ['run', '-d', '--name', 'dbserver', '--net', 'stanford', '-v', '/workspace:/workspace', 'store/oracle/database-enterprise:12.2.0.1-slim']
   
 - name: 'gcr.io/cloud-builders/docker'
   entrypoint: 'bash'
@@ -28,7 +28,7 @@ steps:
   
 - name: 'gcr.io/cloud-builders/docker'
   entrypoint: 'bash'
-  args: ['-c', "docker run --name appserver --net standford -e SRCCLR_API_TOKEN=$$SRCCLR_API_TOKEN -v /workspace:/workspace --entrypoint 'bash' 'gcr.io/cloud-builders/mvn'  -c /workspace/app_build.sh"]  
+  args: ['-c', "docker run --name appserver --net stanford -e SRCCLR_API_TOKEN=$$SRCCLR_API_TOKEN -v /workspace:/workspace --entrypoint 'bash' 'gcr.io/cloud-builders/mvn'  -c /workspace/app_build.sh"]  
   secretEnv: ['SRCCLR_API_TOKEN']
 
 - name: 'gcr.io/cloud-builders/docker'
