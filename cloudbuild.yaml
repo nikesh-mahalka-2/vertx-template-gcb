@@ -1,3 +1,11 @@
+# cloudbuild.yaml for building vertx-template with Oracle DB and Postgres in GCB
+
+
+# Credentials of SourceClear and Docker Store are encrypted using Google Cloud KMS
+# Docker Store secrets are used for Oracle DB Docker images
+# See below link for more information on using Google Cloud KMS:
+# https://cloud.google.com/container-builder/docs/securing-builds/use-encrypted-secrets-credentials#encrypting_an_environment_variable_using_the_cryptokey
+
 secrets:
 - kmsKeyName: 'projects/spinnaker-poc-200412/locations/global/keyRings/source-clear-encryption/cryptoKeys/source-clear-encryption'
   secretEnv:
@@ -6,6 +14,10 @@ secrets:
     DOCKER_PASSWORD: CiQAxgges7DOxqkgtgOuOMALZgIaa9f1JiSno67g6Lol98O5nocSNACedAH6lqExDVBta0bn8WLD+XqAwhLapJxt4mMxzm6waV8t3js8eSV2PswjVb8DDNWWGxE=
 
 # Build Steps:
+# 1. ojdbc7.jar is copied from Google Cloud Storage bucket to GCB workspace for
+#    using local maven repository to get the ojdbc7.jar dependency
+
+# Note: Edited sample.properties for Oracle/Postgres and enabled/disabled ojdbc7 dependency in pom.xml
 steps:
 - name: 'gcr.io/cloud-builders/gsutil'
   args: ['cp', 'gs://delete-oracle-jdbc-jar/ojdbc7.jar', 'ojdbc7.jar']
