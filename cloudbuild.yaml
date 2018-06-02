@@ -28,7 +28,7 @@ steps:
   
 - name: 'gcr.io/cloud-builders/docker'
   entrypoint: 'bash'
-  args: ['-c', "docker run --name appbuildserver --net stanford -e SRCCLR_API_TOKEN=$$SRCCLR_API_TOKEN -v /workspace:/workspace --entrypoint 'bash' 'gcr.io/cloud-builders/mvn'  -c /workspace/app_build.sh"]  
+  args: ['-c', "docker run --name appbuildserver --net stanford -e SRCCLR_API_TOKEN=$$SRCCLR_API_TOKEN -v /workspace:/workspace --entrypoint 'bash' 'gcr.io/cloud-builders/mvn'  -c 'apt-get update;apt-get install curl -y;cd /workspace;mvn install:install-file -Dfile=./ojdbc7.jar -DgroupId=com.oracle.jdbc -DartifactId=ojdbc7 -Dversion=12.1.0.2 -Dpackaging=jar;mvn -DskipTests clean package;curl -sSL https://download.sourceclear.com/ci.sh | sh'"]  
   secretEnv: ['SRCCLR_API_TOKEN']
 
 - name: 'gcr.io/cloud-builders/docker'
