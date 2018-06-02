@@ -19,7 +19,8 @@ steps:
   args: ['network', 'create', 'stanford']
 
 - name: 'gcr.io/cloud-builders/docker'
-  args: ['run', '-d', '--name', 'dbserver', '--net', 'stanford', '-v', '/workspace:/workspace', 'store/oracle/database-enterprise:12.2.0.1-slim']
+  args: ['run', '-d', '--name', 'dbserver', '--net', 'stanford', '-v',
+         '/workspace:/workspace', 'store/oracle/database-enterprise:12.2.0.1-slim']
   
 - name: 'gcr.io/cloud-builders/docker'
   entrypoint: 'bash'
@@ -28,15 +29,24 @@ steps:
   
 - name: 'gcr.io/cloud-builders/docker'
   entrypoint: 'bash'
-  args: ['-c', "docker run --name appbuildserver --net stanford -e SRCCLR_API_TOKEN=$$SRCCLR_API_TOKEN -v /workspace:/workspace --entrypoint 'bash' 'gcr.io/cloud-builders/mvn'  -c 'apt-get update;apt-get install curl -y;cd /workspace;mvn install:install-file -Dfile=./ojdbc7.jar -DgroupId=com.oracle.jdbc -DartifactId=ojdbc7 -Dversion=12.1.0.2 -Dpackaging=jar;mvn -DskipTests clean package;curl -sSL https://download.sourceclear.com/ci.sh | sh'"]  
+  args: ['-c', "docker run --name appbuildserver --net stanford -e SRCCLR_API_TOKEN=$$SRCCLR_API_TOKEN \
+         -v /workspace:/workspace --entrypoint 'bash' 'gcr.io/cloud-builders/mvn' \
+         -c 'apt-get update;apt-get install curl -y;cd /workspace; \
+         mvn install:install-file -Dfile=./ojdbc7.jar -DgroupId=com.oracle.jdbc -DartifactId=ojdbc7 \
+         -Dversion=12.1.0.2 -Dpackaging=jar; mvn -DskipTests clean package; \
+         curl -sSL https://download.sourceclear.com/ci.sh | sh'"]  
   secretEnv: ['SRCCLR_API_TOKEN']
 
 - name: 'gcr.io/cloud-builders/docker'
   entrypoint: 'bash'
-  args: ['-c', "docker run -d --name apptestserver --net stanford  -v /workspace:/workspace --entrypoint 'bash' 'gcr.io/cloud-builders/mvn'  -c 'cd /workspace; java -Ddatabase.url=jdbc:oracle:thin:@dbserver:1521/ORCLCDB.localdomain -Djava.security.egd=file:/dev/./urandom -jar /workspace/target/vertx-*-SNAPSHOT.jar create-database run'"]
+  args: ['-c', "docker run -d --name apptestserver --net stanford  -v /workspace:/workspace \
+         --entrypoint 'bash' 'gcr.io/cloud-builders/mvn'  -c 'cd /workspace; \
+         java -Ddatabase.url=jdbc:oracle:thin:@dbserver:1521/ORCLCDB.localdomain \
+         -Djava.security.egd=file:/dev/./urandom -jar /workspace/target/vertx-*-SNAPSHOT.jar create-database run'"]
 
 - name: 'gcr.io/cloud-builders/docker'
-  args: ['exec', '-e', 'DB_TBL_CHK_MAX_RETRY', '-e', 'DB_TBL_CHK_SLEEP', 'dbserver', 'bash', '-c', '/workspace/check_oracle_table.sh']
+  args: ['exec', '-e', 'DB_TBL_CHK_MAX_RETRY', '-e', 'DB_TBL_CHK_SLEEP', 'dbserver',
+         'bash', '-c', '/workspace/check_oracle_table.sh']
   env: ['DB_TBL_CHK_MAX_RETRY=10','DB_TBL_CHK_SLEEP=10']
 
 
