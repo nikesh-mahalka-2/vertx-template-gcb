@@ -47,3 +47,17 @@ steps:
   env: ['APP_BUILD_SERVER=postgres-app-build-server','POSTGRES_NET=stanford-postgres',
         'APP_BUILD_IMAGE=gcr.io/cloud-builders/mvn']
   secretEnv: ['SRCCLR_API_TOKEN']
+
+- name: 'gcr.io/cloud-builders/docker'
+  entrypoint: 'bash'
+  args: ['-c', "docker run -d --name $$APP_TEST_SERVER --net $$POSTGRES_NET \
+         -v /workspace:/workspace --entrypoint 'bash' $$APP_TEST_IMAGE \
+         -c 'cd /workspace; java -jar /workspace/target/vertx-*-SNAPSHOT.jar create-database run'"]
+  env: ['APP_TEST_SERVER=postgres-app-test-server','POSTGRES_NET=stanford-postgres',
+        'APP_TEST_IMAGE=gcr.io/cloud-builders/mvn']
+
+- name: 'gcr.io/cloud-builders/docker'
+  entrypoint: 'bash'
+  args: ['-c', "docker exec -e POSTGRES_SERVER -e DB_TBL_CHK_MAX_RETRY \
+         -e DB_TBL_CHK_SLEEP $$POSTGRES_SERVER bash -c '/workspace/check_postgres_table.sh'"]
+  env: ['DB_TBL_CHK_MAX_RETRY=10','DB_TBL_CHK_SLEEP=10','POSTGRES_SERVER=postgres-dbserver']
