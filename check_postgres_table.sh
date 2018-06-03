@@ -1,10 +1,18 @@
 #!/bin/bash
-VAR=1
-while [[ $VAR != 0 ]]
+set -xe
+num_retry=0
+until [[ $num_retry -gt $DB_TBL_CHK_MAX_RETRY ]]
 do
-  echo "checking existence of app_message"
-  PGPASSWORD=$POSTGRES_PASSWORD psql -U $POSTGRES_USER -d $POSTGRES_DB -h $POSTGRES_URL -c "\d app_message"
-  VAR=`echo $?`
-  sleep 10
+  echo "retry-$num_retry to check existence of table app_server in Postgres DB"
+  num_retry=$[$num_retry+1]
+  RESP=`PGPASSWORD=$POSTGRES_PASSWORD psql -U $POSTGRES_USER -d $POSTGRES_DB -h $POSTGRES_SERVER -c '\d app_message' 2> /dev/null`
+#  RESP=`PGPASSWORD=$POSTGRES_PASSWORD psql -U $POSTGRES_USER -d $POSTGRES_DB -h $POSTGRES_SERVER -c '\d app_message' > /dev/null 2>&1; echo $?`
+  if [[ "$RESP" == 0 ]]; then
+    echo "app_message table is created"
+    exit 0
+  fi
+  sleep $DB_TBL_CHK_SLEEP
 done
-echo "app_message table is created"
+
+echo "app_message table is not created"
+exit 1
