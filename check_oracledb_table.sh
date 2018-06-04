@@ -5,7 +5,7 @@ LOGON="sys/Oradoc_db1@$ORACLEDB_SERVER:1521/ORCLCDB.localdomain as sysdba"
 num_retry=0
 until [[ "$num_retry" -gt "$DB_TBL_CHK_MAX_RETRY" ]]
 do
-  echo "retry-$num_retry to check existence of table app_server in Oracle DB"
+  echo "retry-$num_retry to check existence of table app_message in Oracle DB"
   num_retry=$((num_retry+1))
   RESP=$("$SQLPATH" -S "$LOGON" << EOF
 describe app_message
