@@ -71,8 +71,7 @@ steps:
   env: ['DB_TBL_CHK_MAX_RETRY=10', 'DB_TBL_CHK_SLEEP=10', 'ORACLEDB_SERVER=oracle-dbserver']
 
 - name: 'gcr.io/cloud-builders/docker'
-  args: ['build', '-t', "'cr.io/$PROJECT_ID/vertx-template-oracledb:latest', '.']
+  args: ['build', '-t', 'gcr.io/$PROJECT_ID/vertx-template-oracledb:latest', '.']
 
 images:
   - 'gcr.io/$PROJECT_ID/vertx-template-oracledb:latest'
-
