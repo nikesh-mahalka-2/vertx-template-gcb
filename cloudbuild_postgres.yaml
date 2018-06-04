@@ -26,7 +26,7 @@ steps:
 
 - name: 'gcr.io/cloud-builders/docker'
   entrypoint: 'bash'
-  args: ['-c', "cp ./postgres_sample.properties ./sample.properties"]
+  args: ['-c', "cp ./postgres_sample.properties ./sample.properties; cp ./postgres_pom.xml pom.xml"]
 
 - name: 'gcr.io/cloud-builders/docker'
   entrypoint: 'bash'
