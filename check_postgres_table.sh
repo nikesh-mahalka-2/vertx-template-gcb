@@ -1,5 +1,4 @@
 #!/bin/bash
-set -xe
 num_retry=0
 until [[ "$num_retry" -gt "$DB_TBL_CHK_MAX_RETRY" ]]
 do
