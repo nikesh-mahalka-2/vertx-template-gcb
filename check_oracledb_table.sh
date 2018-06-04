@@ -1,5 +1,4 @@
 #!/bin/bash
-set -xe
 SQLPATH="/u01/app/oracle/product/12.2.0/dbhome_1/bin/sqlplus"
 LOGON="sys/Oradoc_db1@$ORACLEDB_SERVER:1521/ORCLCDB.localdomain as sysdba"
 
