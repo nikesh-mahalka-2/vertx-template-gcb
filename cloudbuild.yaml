@@ -2,7 +2,14 @@
 
 
 # Credentials of SourceClear and Docker Store are encrypted using Google Cloud KMS
-# Docker Store secrets are used for Oracle DB Docker images
+# Docker Store credentials are used for Oracle DB Docker images
+
+# Create a Google Cloud KMS KeyRing and CryptoKey and grant the Container Builder service account access to the CryptoKey
+# Run the following command in shell or terminal window to encrpt SourceClear and Docker Store credentials
+# MY_SECRET=<enter-your-credential>
+# echo -n $MY_SECRET | gcloud kms encrypt --plaintext-file=- --ciphertext-file=- \
+# --location=global --keyring=[KEYRING-NAME] --key=[KEY-NAME] | base64
+
 # See below link for more information on using Google Cloud KMS:
 # https://cloud.google.com/container-builder/docs/securing-builds/use-encrypted-secrets-credentials#encrypting_an_environment_variable_using_the_cryptokey
 
@@ -84,7 +91,7 @@ steps:
 
 - name: 'gcr.io/cloud-builders/docker'
   entrypoint: 'bash'
-  args: ['-c', 'cp ./postgres_sample.properties ./sample.properties']
+  args: ['-c', "cp ./postgres_sample.properties ./sample.properties; cp ./postgres_pom.xml pom.xml"]
 
 - name: 'gcr.io/cloud-builders/docker'
   entrypoint: 'bash'
