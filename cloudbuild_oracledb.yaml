@@ -24,8 +24,7 @@ steps:
 
 - name: 'gcr.io/cloud-builders/docker'
   entrypoint: 'bash'
-  args: ['-c', 'cp ./oracle_sample.properties ./sample.properties; \
-         cp ./oracle_pom.xml ./pom.xml']
+  args: ['-c', "cp ./oracle_sample.properties ./sample.properties; cp ./oracle_pom.xml ./pom.xml"]
 
 - name: 'gcr.io/cloud-builders/docker'
   entrypoint: 'bash'
