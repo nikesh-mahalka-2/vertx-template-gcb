@@ -28,40 +28,51 @@ steps:
   secretEnv: ['DOCKER_USERNAME', 'DOCKER_PASSWORD']
 
 - name: 'gcr.io/cloud-builders/docker'
-  args: ['network', 'create', 'stanford']
+  entrypoint: 'bash'
+  args: ['-c', 'docker network create $$ORACLEDB_NET']
+  env: ['ORACLEDB_NET=stanford-oracledb']
 
 - name: 'gcr.io/cloud-builders/docker'
-  args: ['run', '-d', '--name', 'oracle-dbserver', '--net', 'stanford', '-v',
-         '/workspace:/workspace', 'store/oracle/database-enterprise:12.2.0.1-slim']
+  entrypoint: 'bash'
+  args: ['-c', "docker run -d --name $$ORACLEDB_SERVER --net $$ORACLEDB_NET \
+         -v /workspace:/workspace $$ORACLEDB_IMAGE"]
+  env: ['ORACLEDB_IMAGE=store/oracle/database-enterprise:12.2.0.1-slim', 'ORACLEDB_SERVER=oracle-dbserver',
+        'ORACLEDB_NET=stanford-oracledb']
+ 
+- name: 'gcr.io/cloud-builders/docker'
+  entrypoint: 'bash'
+  args: ['-c', './check_oracledb_health.sh']
+  env: ['DB_HLTH_CHK_MAX_RETRY=7', 'DB_HLTH_CHK_SLEEP=20', 'ORACLEDB_SERVER=oracle-dbserver']
   
 - name: 'gcr.io/cloud-builders/docker'
   entrypoint: 'bash'
-  args: ['-c', 'chmod 755 ./check_oracledb_health.sh; ./check_oracledb_health.sh']
-  env: ['DB_HLTH_CHK_MAX_RETRY=7','DB_HLTH_CHK_SLEEP=20']
-  
-- name: 'gcr.io/cloud-builders/docker'
-  entrypoint: 'bash'
-  args: ['-c', "docker run --name appbuildserver --net stanford -e SRCCLR_API_TOKEN=$$SRCCLR_API_TOKEN \
-         -v /workspace:/workspace --entrypoint 'bash' 'gcr.io/cloud-builders/mvn' \
-         -c 'apt-get update;apt-get install curl -y;cd /workspace; \
+  args: ['-c', "docker run --name $$APP_BUILD_SERVER --net $$ORACLEDB_NET -e SRCCLR_API_TOKEN \
+         -v /workspace:/workspace --entrypoint 'bash' $$APP_BUILD_IMAGE \
+         -c 'apt-get update; apt-get install curl -y; cd /workspace; \
          mvn install:install-file -Dfile=./ojdbc7.jar -DgroupId=com.oracle.jdbc -DartifactId=ojdbc7 \
          -Dversion=12.1.0.2 -Dpackaging=jar; mvn -DskipTests clean package; \
-         curl -sSL https://download.sourceclear.com/ci.sh | sh'"]  
+         curl -sSL https://download.sourceclear.com/ci.sh | sh'"]
+  env: ['APP_BUILD_SERVER=oracledb-app-build-server', 'ORACLEDB_NET=stanford-oracledb',
+        'APP_BUILD_IMAGE=gcr.io/cloud-builders/mvn']
   secretEnv: ['SRCCLR_API_TOKEN']
 
 - name: 'gcr.io/cloud-builders/docker'
   entrypoint: 'bash'
-  args: ['-c', "docker run -d --name apptestserver --net stanford  -v /workspace:/workspace \
-         --entrypoint 'bash' 'gcr.io/cloud-builders/mvn'  -c 'cd /workspace; \
-         java -Ddatabase.url=jdbc:oracle:thin:@oracle-dbserver:1521/ORCLCDB.localdomain \
-         -Djava.security.egd=file:/dev/./urandom -jar /workspace/target/vertx-*-SNAPSHOT.jar create-database run'"]
+  args: ['-c', "docker run -d --name $$APP_TEST_SERVER --net $$ORACLEDB_NET \
+         -v /workspace:/workspace --entrypoint 'bash' $$APP_TEST_IMAGE -c 'cd /workspace; \
+         java -Djava.security.egd=file:/dev/./urandom -jar /workspace/target/vertx-*-SNAPSHOT.jar create-database run'"]
+  env: ['APP_TEST_SERVER=oracledb-app-test-server', 'ORACLEDB_NET=stanford-oracledb',
+        'APP_TEST_IMAGE=gcr.io/cloud-builders/mvn']
 
 - name: 'gcr.io/cloud-builders/docker'
-  args: ['exec', '-e', 'DB_TBL_CHK_MAX_RETRY', '-e', 'DB_TBL_CHK_SLEEP', 'oracle-dbserver',
-         'bash', '-c', '/workspace/check_oracle_table.sh']
-  env: ['DB_TBL_CHK_MAX_RETRY=10','DB_TBL_CHK_SLEEP=10']
+  entrypoint: 'bash'
+  args: ['-c', "docker exec -e ORACLEDB_SERVER -e DB_TBL_CHK_MAX_RETRY \
+         -e DB_TBL_CHK_SLEEP $$ORACLEDB_SERVER bash -c '/workspace/check_oracledb_table.sh'"]
+  env: ['DB_TBL_CHK_MAX_RETRY=10', 'DB_TBL_CHK_SLEEP=10', 'ORACLEDB_SERVER=oracle-dbserver']
 
+- name: 'gcr.io/cloud-builders/docker'
+  args: ['build', '-t', "'cr.io/$PROJECT_ID/vertx-template-oracledb:latest', '.']
 
+images:
+  - 'gcr.io/$PROJECT_ID/vertx-template-oracledb:latest'
 
-#images:
-#  - 'gcr.io/$PROJECT_ID/vertx-template-gcb:latest'

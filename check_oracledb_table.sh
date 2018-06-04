@@ -1,7 +1,7 @@
 #!/bin/bash
 set -xe
 SQLPATH="/u01/app/oracle/product/12.2.0/dbhome_1/bin/sqlplus"
-LOGON="sys/Oradoc_db1@oracle-dbserver:1521/ORCLCDB.localdomain as sysdba"
+LOGON="sys/Oradoc_db1@$ORACLEDB_SERVER:1521/ORCLCDB.localdomain as sysdba"
 
 num_retry=0
 until [[ $num_retry -gt $DB_TBL_CHK_MAX_RETRY ]]
