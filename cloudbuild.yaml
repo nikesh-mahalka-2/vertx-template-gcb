@@ -111,7 +111,7 @@ steps:
   entrypoint: 'bash'
   args: ['-c', "cp ./postgres_sample.properties ./sample.properties; cp ./postgres_pom.xml pom.xml"]
 
-# Creating an Postgres server 
+# Creating a Postgres server 
 - name: 'gcr.io/cloud-builders/docker'
   entrypoint: 'bash'
   args: ['-c', "docker run -d --name $$POSTGRES_SERVER --net $$POSTGRES_NET \
