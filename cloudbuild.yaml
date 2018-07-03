@@ -15,8 +15,8 @@
 secrets:
 - kmsKeyName: 'projects/spinnaker-poc-200412/locations/global/keyRings/source-clear-encryption/cryptoKeys/source-clear-encryption'
   secretEnv:
-    DOCKER_USERNAME: _DOCKER_USERNAME
-    DOCKER_PASSWORD: _DOCKER_PASSWORD
+    DOCKER_USERNAME: $${_DOCKER_USERNAME}
+    DOCKER_PASSWORD: $${_DOCKER_PASSWORD}
 
 # Build Steps:
 steps:
